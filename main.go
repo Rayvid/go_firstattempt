@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/Rayvid/go_firstattempt/internal/session"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Hi there!")
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	session.HandleSession(w, r)
 }
 
 func main() {

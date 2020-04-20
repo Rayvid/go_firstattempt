@@ -1,8 +1,8 @@
-package eventstreamsession
+package session
 
 import "net/http"
 
-// Handle event stream sessions
-func Handle(w http.ResponseWriter, r *http.Request) {
+// HandleSession handles event stream sessions
+func HandleSession(w http.ResponseWriter, r *http.Request) {
 
 }
