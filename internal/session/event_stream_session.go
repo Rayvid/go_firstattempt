@@ -13,6 +13,10 @@ import (
 func HandleSession(w http.ResponseWriter, r *http.Request, p httprouter.Params) (err error) {
 	topic := p.ByName("topic")
 
+	r.Header.Set("Access-Control-Allow-Origin", "*")
+	r.Header.Set("Cache-Control", "no-cache")
+	r.Header.Set("Content-Type", "text/event-stream; charset=utf-8")
+
 	switch r.Method {
 	case "POST":
 		err = post.HandleRequest(w, r, topic)

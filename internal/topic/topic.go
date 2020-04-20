@@ -24,8 +24,9 @@ func (topic *Topic) Subscribe(ch chan<- message.Message) {
 	defer topic.syncRoot.Unlock()
 
 	topic.listeners = append(topic.listeners, ch)
-	for _, message := range topic.messages {
-		ch <- message
+	for _, msg := range topic.messages {
+		// Do not block when already under lock
+		go func(listener chan<- message.Message, msg message.Message) { listener <- msg }(ch, msg)
 	}
 }
 
@@ -52,13 +53,16 @@ func (topic *Topic) Unsubscribe(ch chan<- message.Message) {
 }
 
 // Post message to all listeners
-func (topic *Topic) Post(message message.Message) {
+func (topic *Topic) Post(msg message.Message) {
 	topic.syncRoot.Lock()
 	defer topic.syncRoot.Unlock()
 
-	topic.messages = append(topic.messages, message)
-	for _, listener := range topic.listeners {
-		listener <- message
+	if len(topic.listeners) > 0 {
+		topic.messages = append(topic.messages, msg)
+		for _, listener := range topic.listeners {
+			// Do not block when already under lock
+			go func(listener chan<- message.Message, msg message.Message) { listener <- msg }(listener, msg)
+		}
 	}
 }
 

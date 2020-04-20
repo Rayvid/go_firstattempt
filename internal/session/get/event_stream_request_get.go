@@ -32,6 +32,9 @@ loop:
 				ch = nil
 			} else {
 				_, err = fmt.Fprintf(w, "id: %v\nevent: msg\ndata: %v\n", msg.ID, msg.Text)
+				if f, ok := w.(http.Flusher); ok {
+					f.Flush()
+				}
 			}
 		case _, _ = <-timeout:
 			_, err = fmt.Fprintf(w, "event: timeout\ndata: 30s\n")
