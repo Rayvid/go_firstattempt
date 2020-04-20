@@ -17,8 +17,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, topicName string) (er
 	content, err := ioutil.ReadAll(r.Body)
 
 	if err == nil {
-		atomic.AddInt64(&autoincrement, 1)
-		t.Post(message.Message{ID: autoincrement, Text: string(content)})
+		t.Post(message.Message{ID: atomic.AddInt64(&autoincrement, 1), Text: string(content)})
 	}
 
 	return err
