@@ -44,6 +44,7 @@ func (topic *Topic) Unsubscribe(ch chan<- message.Message) {
 				syncRoot.Lock()
 				defer syncRoot.Unlock()
 
+				// Do not keep empty topic
 				delete(topics, topic.Name)
 			}
 
@@ -63,6 +64,12 @@ func (topic *Topic) Post(msg message.Message) {
 			// Do not block when already under lock
 			go func(listener chan<- message.Message, msg message.Message) { listener <- msg }(listener, msg)
 		}
+	} else {
+		syncRoot.Lock()
+		defer syncRoot.Unlock()
+
+		// Do not keep empty topic
+		delete(topics, topic.Name)
 	}
 }
 
